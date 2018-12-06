@@ -9,7 +9,7 @@ import com.ngeso.security.model.VerifyResult;
 import com.ngeso.security.token.TokenParser;
 
 @Service
-public class Signature implements ISignature{
+public class SecurityOperations implements ISignature{
 
 	private final IPublicKey service;
 	private final TokenParser parser=new TokenParser();
@@ -19,7 +19,7 @@ public class Signature implements ISignature{
 	@Value("${AUD:'NGESO'}")
 	private String audience;
 
-	public Signature(IPublicKey service) {
+	public SecurityOperations(IPublicKey service) {
 		super();
 		this.service = service;
 	}

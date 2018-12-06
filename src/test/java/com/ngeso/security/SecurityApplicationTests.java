@@ -10,10 +10,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 public class SecurityApplicationTests {
 
-	Signature sign;
+	SecurityOperations sign;
 	@BeforeClass
 	public static void prepare() {
 		//sign=new Signature();
+		//Probar que lea del archivo de propiedades
+
 	}
 
 	@Test
