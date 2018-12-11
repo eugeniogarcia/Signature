@@ -1,0 +1,9 @@
+openssl
+
+genrsa -out NGESO_RS256.key 2048
+
+pkcs8 -topk8 -nocrypt -in NGESO_RS256.key -out NGESO_RS256_old.key 
+
+req -new -key NGESO_RS256_old.key -out NGESO_RS256_old_req.pem
+
+x509 -req -in NGESO_RS256_old_req.pem -signkey NGESO_RS256_old.key -out NGESO_RS256_old.pem

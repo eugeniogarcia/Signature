@@ -1,8 +1,10 @@
 package com.ngeso.security.crypto;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -12,6 +14,8 @@ import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
@@ -60,7 +64,6 @@ public class KeyManagement {
 		return this.publicKey.getEncoded();
 	}
 
-
 	//Parsers
 	public static PrivateKey parsePrivateString(String privKey) throws Exception {
 		final PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(privKey));
@@ -69,7 +72,7 @@ public class KeyManagement {
 		return kf.generatePrivate(spec);
 	}
 
-	public PublicKey parsePublicString(String pubKey) throws Exception {
+	public static PublicKey parsePublicString(String pubKey) throws Exception {
 		final X509EncodedKeySpec spec = new X509EncodedKeySpec(Base64.getDecoder().decode(pubKey));
 		final KeyFactory kf = KeyFactory.getInstance("RSA");
 		return kf.generatePublic(spec);
@@ -82,13 +85,12 @@ public class KeyManagement {
 		return kf.generatePrivate(spec);
 	}
 
-	public PublicKey parsePublicFile(String filename) throws Exception {
+	public static PublicKey parsePublicFile(String filename) throws Exception {
 		final byte[] keyBytes = Files.readAllBytes(new File(filename).toPath());
 		final X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
 		final KeyFactory kf = KeyFactory.getInstance("RSA");
 		return kf.generatePublic(spec);
 	}
-
 
 	public static PrivateKey parsePrivateByte(byte[] privKey) throws Exception {
 		final PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(privKey);
@@ -102,6 +104,27 @@ public class KeyManagement {
 		return kf.generatePublic(spec);
 	}
 
+
+	public static PrivateKey parsePrivateCertificate(String privateKeyPEM) throws Exception {
+		// strip of header, footer, newlines, whitespaces
+		privateKeyPEM = privateKeyPEM
+				.replace("-----BEGIN PRIVATE KEY-----", "")
+				.replace("-----END PRIVATE KEY-----", "")
+				.replaceAll("\\s", "");
+
+		// decode to get the binary DER representation
+		final byte[] privateKeyDER = Base64.getDecoder().decode(privateKeyPEM);
+
+		final KeyFactory keyFactory=KeyFactory.getInstance("RSA");
+		return keyFactory.generatePrivate(new PKCS8EncodedKeySpec(privateKeyDER));
+	}
+
+	public static PublicKey parsePublicCertificate(String publicCertificate) throws Exception {
+		final InputStream fin = new ByteArrayInputStream(publicCertificate.getBytes());
+		final CertificateFactory f=CertificateFactory.getInstance("X.509");
+		final X509Certificate certificate= (X509Certificate)f.generateCertificate(fin);
+		return certificate.getPublicKey();
+	}
 
 	//Write Files
 	public void writePrivate(String filename) throws Exception {
