@@ -34,75 +34,81 @@ public class KeyManagement {
 		this.publicKey = pair.getPublic();
 	}
 
+
+	//Getters
 	public PrivateKey getPrivateKey() {
 		return this.privateKey;
-	}
-
-	public byte[] getPrivateByte(){
-		return this.privateKey.getEncoded();
-	}
-
-	public static PrivateKey setPrivateByte(byte[] privKey) throws Exception {
-		final PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(privKey);
-		final KeyFactory kf = KeyFactory.getInstance("RSA");
-		return kf.generatePrivate(spec);
-	}
-
-	public String getPrivateString() {
-		return Base64.getEncoder().encodeToString(this.privateKey.getEncoded());
-	}
-
-	public static PrivateKey setPrivateString(String privKey) throws Exception {
-		final PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(privKey));
-
-		final KeyFactory kf = KeyFactory.getInstance("RSA");
-		return kf.generatePrivate(spec);
-	}
-
-	public PrivateKey getPrivateFile(String filename) throws Exception {
-		final byte[] keyBytes = Files.readAllBytes(new File(filename).toPath());
-		final PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
-		final KeyFactory kf = KeyFactory.getInstance("RSA");
-		return kf.generatePrivate(spec);
-	}
-
-	public void setPrivateFile(String filename) throws Exception {
-		writeToFile(filename,this.privateKey.getEncoded());
 	}
 
 	public PublicKey getPublicKey() {
 		return this.publicKey;
 	}
 
-	public byte[] getPublicByte() {
-		return this.publicKey.getEncoded();
-	}
-
-	public PublicKey setPublicByte(byte[] pubKey) throws Exception {
-		final X509EncodedKeySpec spec = new X509EncodedKeySpec(pubKey);
-		final KeyFactory kf = KeyFactory.getInstance("RSA");
-		return kf.generatePublic(spec);
+	public String getPrivateString() {
+		return Base64.getEncoder().encodeToString(this.privateKey.getEncoded());
 	}
 
 	public String getPublicString() {
 		return Base64.getEncoder().encodeToString(this.publicKey.getEncoded());
 	}
 
-	public PublicKey setPublicString(String pubKey) throws Exception {
+	public byte[] getPrivateByte(){
+		return this.privateKey.getEncoded();
+	}
+
+	public byte[] getPublicByte() {
+		return this.publicKey.getEncoded();
+	}
+
+
+	//Parsers
+	public static PrivateKey parsePrivateString(String privKey) throws Exception {
+		final PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(privKey));
+
+		final KeyFactory kf = KeyFactory.getInstance("RSA");
+		return kf.generatePrivate(spec);
+	}
+
+	public PublicKey parsePublicString(String pubKey) throws Exception {
 		final X509EncodedKeySpec spec = new X509EncodedKeySpec(Base64.getDecoder().decode(pubKey));
 		final KeyFactory kf = KeyFactory.getInstance("RSA");
 		return kf.generatePublic(spec);
 	}
 
+	public static PrivateKey parsePrivateFile(String filename) throws Exception {
+		final byte[] keyBytes = Files.readAllBytes(new File(filename).toPath());
+		final PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
+		final KeyFactory kf = KeyFactory.getInstance("RSA");
+		return kf.generatePrivate(spec);
+	}
 
-	public PublicKey getPublicFile(String filename) throws Exception {
+	public PublicKey parsePublicFile(String filename) throws Exception {
 		final byte[] keyBytes = Files.readAllBytes(new File(filename).toPath());
 		final X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
 		final KeyFactory kf = KeyFactory.getInstance("RSA");
 		return kf.generatePublic(spec);
 	}
 
-	public void setPublicFile(String filename) throws Exception {
+
+	public static PrivateKey parsePrivateByte(byte[] privKey) throws Exception {
+		final PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(privKey);
+		final KeyFactory kf = KeyFactory.getInstance("RSA");
+		return kf.generatePrivate(spec);
+	}
+
+	public static PublicKey parsePublicByte(byte[] pubKey) throws Exception {
+		final X509EncodedKeySpec spec = new X509EncodedKeySpec(pubKey);
+		final KeyFactory kf = KeyFactory.getInstance("RSA");
+		return kf.generatePublic(spec);
+	}
+
+
+	//Write Files
+	public void writePrivate(String filename) throws Exception {
+		writeToFile(filename,this.privateKey.getEncoded());
+	}
+
+	public void writePublic(String filename) throws Exception {
 		writeToFile(filename,this.publicKey.getEncoded());
 	}
 

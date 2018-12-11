@@ -33,7 +33,7 @@ public class KeyGenerationTest {
 		final byte[] pubBytes= generator.getPublicByte();
 		PublicKey pub=null;
 		try {
-			pub = generator.setPublicByte(pubBytes);
+			pub = generator.parsePublicByte(pubBytes);
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -50,7 +50,7 @@ public class KeyGenerationTest {
 		PublicKey pub=null;
 		final String pubString=generator.getPublicString();
 		try {
-			pub=generator.setPublicString(pubString);
+			pub=generator.parsePublicString(pubString);
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -67,8 +67,8 @@ public class KeyGenerationTest {
 
 		PublicKey pub=null;
 		try {
-			generator.setPublicFile(".\\public.txt");
-			pub=generator.getPublicFile(".\\public.txt");
+			generator.writePublic(".\\public.txt");
+			pub=generator.parsePublicFile(".\\public.txt");
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -84,7 +84,7 @@ public class KeyGenerationTest {
 		PrivateKey priv=null;
 		final String privString=generator.getPrivateString();
 		try {
-			priv=generator.setPrivateString(privString);
+			priv=generator.parsePrivateString(privString);
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -101,7 +101,7 @@ public class KeyGenerationTest {
 		final byte[] privBytes= generator.getPrivateByte();
 		PrivateKey priv=null;
 		try {
-			priv = generator.setPrivateByte(privBytes);
+			priv = generator.parsePrivateByte(privBytes);
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -118,8 +118,8 @@ public class KeyGenerationTest {
 
 		PrivateKey priv=null;
 		try {
-			generator.setPrivateFile(".\\private.txt");
-			priv=generator.getPrivateFile(".\\private.txt");
+			generator.writePrivate(".\\private.txt");
+			priv=generator.parsePrivateFile(".\\private.txt");
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
