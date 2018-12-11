@@ -14,6 +14,7 @@ import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 
 public class KeyManagement {
 	private final KeyPairGenerator keyGen;
@@ -37,29 +38,71 @@ public class KeyManagement {
 		return this.privateKey;
 	}
 
-	public void setInFilePrivate(String filename) throws Exception {
-		writeToFile(filename,this.privateKey.getEncoded());
+	public byte[] getPrivateByte(){
+		return this.privateKey.getEncoded();
 	}
 
-	public PrivateKey getPrivate(String filename) throws Exception {
+	public PrivateKey setPrivateByte(byte[] privKey) throws Exception {
+		final PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(privKey);
+		final KeyFactory kf = KeyFactory.getInstance("RSA");
+		return kf.generatePrivate(spec);
+	}
+
+	public String getPrivateString() {
+		return Base64.getEncoder().encodeToString(this.privateKey.getEncoded());
+	}
+
+	public PrivateKey setPrivateString(String privKey) throws Exception {
+		final PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(privKey));
+
+		final KeyFactory kf = KeyFactory.getInstance("RSA");
+		return kf.generatePrivate(spec);
+	}
+
+	public PrivateKey getPrivateFile(String filename) throws Exception {
 		final byte[] keyBytes = Files.readAllBytes(new File(filename).toPath());
 		final PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
 		final KeyFactory kf = KeyFactory.getInstance("RSA");
 		return kf.generatePrivate(spec);
 	}
 
+	public void setPrivateFile(String filename) throws Exception {
+		writeToFile(filename,this.privateKey.getEncoded());
+	}
+
 	public PublicKey getPublicKey() {
 		return this.publicKey;
 	}
 
-	public PublicKey getPublic(String filename) throws Exception {
+	public byte[] getPublicByte() {
+		return this.publicKey.getEncoded();
+	}
+
+	public PublicKey setPublicByte(byte[] pubKey) throws Exception {
+		final X509EncodedKeySpec spec = new X509EncodedKeySpec(pubKey);
+		final KeyFactory kf = KeyFactory.getInstance("RSA");
+		return kf.generatePublic(spec);
+	}
+
+	public String getPublicString() {
+		return Base64.getEncoder().encodeToString(this.publicKey.getEncoded());
+	}
+
+	public PublicKey setPublicString(String pubKey) throws Exception {
+		final X509EncodedKeySpec spec = new X509EncodedKeySpec(Base64.getDecoder().decode(pubKey));
+		final KeyFactory kf = KeyFactory.getInstance("RSA");
+		return kf.generatePublic(spec);
+	}
+
+
+	public PublicKey getPublicFile(String filename) throws Exception {
 		final byte[] keyBytes = Files.readAllBytes(new File(filename).toPath());
 		final X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
 		final KeyFactory kf = KeyFactory.getInstance("RSA");
 		return kf.generatePublic(spec);
 	}
 
-	public void setInFilePublic(String filename) throws Exception {
+	public void setPublicFile(String filename) throws Exception {
 		writeToFile(filename,this.publicKey.getEncoded());
 	}
 

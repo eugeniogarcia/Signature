@@ -14,6 +14,7 @@ import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import javax.crypto.NoSuchPaddingException;
@@ -28,11 +29,36 @@ public class NonRepudiation {
 		this.rsa = Signature.getInstance("SHA1withRSA");
 	}
 
-	public byte[] sign(String data, PrivateKey RSAPrivateKey) throws InvalidKeyException, Exception{
+	public byte[] signByte(String data, PrivateKey RSAPrivateKey) throws InvalidKeyException, Exception{
 		rsa.initSign(RSAPrivateKey, new SecureRandom());
 		final byte[] message = data.getBytes();
 		rsa.update(message);
 		return rsa.sign();
+	}
+
+	public String signString(String data, PrivateKey RSAPrivateKey) throws InvalidKeyException, Exception{
+		return Base64.getEncoder().encodeToString(signByte(data, RSAPrivateKey));
+	}
+
+	public VerifyResult verifySignatureByte(String data, byte[] signature, PublicKey RSAPublicKey) {
+		try {
+			rsa.initVerify(RSAPublicKey);
+			rsa.update(data.getBytes());
+			return new VerifyResult.Builder().isValid(rsa.verify(signature)).build();
+		}
+		catch (final SignatureException ex) {
+			return new VerifyResult.Builder().errorCode("SignatureException").message("Verify Signature Error. "+ex.getMessage()).isValid(false).build();
+		}
+		catch (final InvalidKeyException ex) {
+			return new VerifyResult.Builder().errorCode("InvalidKeyException").message("Verify Signature Error. "+ex.getMessage()).isValid(false).build();
+		}
+		catch(final Exception ex) {
+			return new VerifyResult.Builder().errorCode("Exception").message(ex.getMessage()).isValid(false).build();
+		}
+	}
+
+	public VerifyResult verifySignatureString(String data, String signature, PublicKey RSAPublicKey) {
+		return verifySignatureByte(data, Base64.getDecoder().decode(signature), RSAPublicKey);
 	}
 
 	public VerifyResult writeSignedPayload(String data, PrivateKey RSAPrivateKey,String filename) {
@@ -40,7 +66,7 @@ public class NonRepudiation {
 
 		try {
 			list.add(data.getBytes());
-			list.add(sign(data, RSAPrivateKey));
+			list.add(signByte(data, RSAPrivateKey));
 
 			final File f = new File(filename);
 			f.getParentFile().mkdirs();
@@ -62,23 +88,6 @@ public class NonRepudiation {
 		}
 	}
 
-	public VerifyResult verifySignature(byte[] data, byte[] signature, PublicKey RSAPublicKey) {
-		try {
-			rsa.initVerify(RSAPublicKey);
-			rsa.update(data);
-			return new VerifyResult.Builder().isValid(rsa.verify(signature)).build();
-		}
-		catch (final SignatureException ex) {
-			return new VerifyResult.Builder().errorCode("SignatureException").message("Verify Signature Error. "+ex.getMessage()).isValid(false).build();
-		}
-		catch (final InvalidKeyException ex) {
-			return new VerifyResult.Builder().errorCode("InvalidKeyException").message("Verify Signature Error. "+ex.getMessage()).isValid(false).build();
-		}
-		catch(final Exception ex) {
-			return new VerifyResult.Builder().errorCode("Exception").message(ex.getMessage()).isValid(false).build();
-		}
-	}
-
 	@SuppressWarnings("unchecked")
 	public VerifyResult readAndVerifySignedPayload(String filename, PublicKey RSAPublicKey) throws Exception {
 		try {
@@ -86,7 +95,7 @@ public class NonRepudiation {
 			final ObjectInputStream in = new ObjectInputStream(new FileInputStream(filename));
 			list = (List<byte[]>) in.readObject();
 			in.close();
-			return verifySignature(list.get(0), list.get(1), RSAPublicKey);
+			return verifySignatureByte(new String(list.get(0)), list.get(1), RSAPublicKey);
 		}
 		catch(final IOException ex) {
 			return new VerifyResult.Builder().errorCode("IOException").message("Error while verifying the written payload. "+ex.getMessage()).isValid(false).build();
