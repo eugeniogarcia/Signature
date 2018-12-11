@@ -2,7 +2,6 @@ package com.ngeso.security;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
@@ -60,9 +59,9 @@ public class EncryptTest {
 		final String from="Data Source";
 		String to="";
 		try {
-			cifra.encryptFile(from.getBytes(),new File(".\\Encrypted.txt"),generator.getPrivateKey());
-			cifra.decryptFile(cifra.getFileInBytes(new File(".\\Encrypted.txt")) , new File(".\\Decrypted.txt"), generator.getPublicKey());
-			to=new String(cifra.getFileInBytes(new File(".\\Decrypted.txt")));
+			cifra.encryptFile(".\\Encrypted.txt",from.getBytes(),generator.getPrivateKey());
+			cifra.decryptFile(".\\Decrypted.txt",cifra.getFileInBytes(".\\Encrypted.txt") , generator.getPublicKey());
+			to=new String(cifra.getFileInBytes(".\\Decrypted.txt"));
 		} catch (IOException | GeneralSecurityException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

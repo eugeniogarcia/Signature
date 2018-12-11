@@ -24,15 +24,17 @@ public class Encrypt {
 		this.cipher = Cipher.getInstance("RSA");
 	}
 
-	private void writeToFile(File output, byte[] toWrite)
+	private void writeToFile(String filename, byte[] toWrite)
 			throws IllegalBlockSizeException, BadPaddingException, IOException {
+		final File output =new File(filename);
 		final FileOutputStream fos = new FileOutputStream(output);
 		fos.write(toWrite);
 		fos.flush();
 		fos.close();
 	}
 
-	public byte[] getFileInBytes(File f) throws IOException {
+	public byte[] getFileInBytes(String filename) throws IOException {
+		final File f=new File(filename);
 		final FileInputStream fis = new FileInputStream(f);
 		final byte[] fbytes = new byte[(int) f.length()];
 		fis.read(fbytes);
@@ -55,16 +57,16 @@ public class Encrypt {
 		return new String(cipher.doFinal(Base64.getDecoder().decode(msg)), "UTF-8");
 	}
 
-	public void encryptFile(byte[] input, File output, PrivateKey key)
+	public void encryptFile(String filename, byte[] input, PrivateKey key)
 			throws IOException, GeneralSecurityException {
 		this.cipher.init(Cipher.ENCRYPT_MODE, key);
-		writeToFile(output, this.cipher.doFinal(input));
+		writeToFile(filename, this.cipher.doFinal(input));
 	}
 
-	public void decryptFile(byte[] input, File output, PublicKey key)
+	public void decryptFile(String filename, byte[] input, PublicKey key)
 			throws IOException, GeneralSecurityException {
 		this.cipher.init(Cipher.DECRYPT_MODE, key);
-		writeToFile(output, this.cipher.doFinal(input));
+		writeToFile(filename, this.cipher.doFinal(input));
 	}
 
 }

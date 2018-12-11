@@ -61,7 +61,7 @@ public class NonRepudiation {
 		return verifySignatureByte(data, Base64.getDecoder().decode(signature), RSAPublicKey);
 	}
 
-	public VerifyResult writeSignedPayload(String data, PrivateKey RSAPrivateKey,String filename) {
+	public VerifyResult writeSignedPayload(String filename,String data, PrivateKey RSAPrivateKey) {
 		final List<byte[]> list= new ArrayList<byte[]>();
 
 		try {

@@ -68,7 +68,7 @@ public class NonRepudiationTest {
 
 		final String from="Data Source";
 		try {
-			VerifyResult result= signature.writeSignedPayload(from,generator.getPrivateKey(),".\\Signed.txt");
+			VerifyResult result= signature.writeSignedPayload(".\\Signed.txt",from,generator.getPrivateKey());
 			assertThat(result.isValid()).isTrue();
 			result=signature.readAndVerifySignedPayload(".\\Signed.txt", generator.getPublicKey());
 			assertThat(result.isValid()).isTrue();

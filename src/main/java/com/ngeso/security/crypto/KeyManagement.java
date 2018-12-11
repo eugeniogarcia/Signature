@@ -42,7 +42,7 @@ public class KeyManagement {
 		return this.privateKey.getEncoded();
 	}
 
-	public PrivateKey setPrivateByte(byte[] privKey) throws Exception {
+	public static PrivateKey setPrivateByte(byte[] privKey) throws Exception {
 		final PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(privKey);
 		final KeyFactory kf = KeyFactory.getInstance("RSA");
 		return kf.generatePrivate(spec);
@@ -52,7 +52,7 @@ public class KeyManagement {
 		return Base64.getEncoder().encodeToString(this.privateKey.getEncoded());
 	}
 
-	public PrivateKey setPrivateString(String privKey) throws Exception {
+	public static PrivateKey setPrivateString(String privKey) throws Exception {
 		final PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(privKey));
 
 		final KeyFactory kf = KeyFactory.getInstance("RSA");
