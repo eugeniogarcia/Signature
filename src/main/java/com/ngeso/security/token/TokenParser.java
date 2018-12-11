@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,8 +21,6 @@ import com.ngeso.security.exception.UnknownEnvironmentException;
 import com.ngeso.security.model.Token;
 
 public class TokenParser {
-	private static final List<String> ENVIRONMENTS = Arrays.asList("dev", "test", "sandbox","fof", "prepro", "prod");
-
 	protected List<Verifier> verifiers;
 
 	public TokenParser() {

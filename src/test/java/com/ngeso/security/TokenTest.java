@@ -2,15 +2,12 @@ package com.ngeso.security;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.time.format.DateTimeFormatter;
-
 import org.junit.Test;
 
 import com.ngeso.security.model.Token;
 
 
 public class TokenTest {
-	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 	@Test
 	public void TokenCreation() {
 		final Token myToken=new Token.Builder()
