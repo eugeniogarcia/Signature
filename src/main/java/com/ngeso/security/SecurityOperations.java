@@ -8,8 +8,10 @@ import javax.crypto.NoSuchPaddingException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.ngeso.security.crypto.KeyManagement;
 import com.ngeso.security.crypto.NonRepudiation;
 import com.ngeso.security.exception.TokenInvalidException;
+import com.ngeso.security.model.SignatureResult;
 import com.ngeso.security.model.Token;
 import com.ngeso.security.model.VerifyResult;
 import com.ngeso.security.token.TokenParser;
@@ -39,12 +41,14 @@ public class SecurityOperations implements ISignature{
 	}
 
 	@Override
-	public String sign(String privateKey, String payload) {
+	public SignatureResult sign(String privateKey, String payload) {
 		//Sign payload
-		//AQUI
-		//RSAPrivateKey
-		//return this.signatary.signString(payload, );
-		return "";
+		try {
+			return new SignatureResult.Builder().isValid(true).signature(this.signatary.signString(payload,KeyManagement.parsePrivateCertificate(privateKey))).build();
+		} catch (final Exception e) {
+			e.printStackTrace();
+			return new SignatureResult.Builder().isValid(false).errorCode("Exception").message(e.getMessage()).build();
+		}
 	}
 
 	@Override
@@ -56,15 +60,15 @@ public class SecurityOperations implements ISignature{
 		}catch (final TokenInvalidException ex) {
 			return new VerifyResult.Builder().message(ex.getMessage()).errorCode("TokenInvalidException").isValid(false).build();
 		}
-
 		// Get Public Key
 		final String pubKey=this.service.getPublicKey(theToken.getMpId());
-		//AQUI
-		//RSAPublicKey
 		//Verify Signature
-		//this.signatary.verifySignatureString(payload, signature, );
-
-		return new VerifyResult.Builder().isValid(true).build();
+		try {
+			return this.signatary.verifySignatureString(payload, signature, KeyManagement.parsePublicCertificate(pubKey));
+		} catch (final Exception e) {
+			e.printStackTrace();
+			return new VerifyResult.Builder().isValid(false).errorCode("Exception").message(e.getMessage()).build();
+		}
 	}
 
 	//Parses a Token. Verifies that the token is valid for a given scope
