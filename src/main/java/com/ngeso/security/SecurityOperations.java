@@ -5,7 +5,6 @@ import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.NoSuchPaddingException;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.ngeso.security.crypto.KeyManagement;
@@ -23,14 +22,15 @@ public class SecurityOperations implements ISignature{
 	private final TokenParser parser=new TokenParser();
 	private NonRepudiation signatary;
 
-	@Value("${IDP:'https://identity.oraclecloud.com/'}")
-	private final String identityProvider="https://identity.oraclecloud.com/";
-	@Value("${AUD:'NGESO'}")
-	private final String audience="NGESO";
+	private String identityProvider;
+	private String audience;
 
-	public SecurityOperations(IPublicKey service) throws GeneralSecurityException {
+	public SecurityOperations(String identityProvider,String audience,IPublicKey service) throws GeneralSecurityException {
 		super();
 		this.service = service;
+		this.identityProvider=identityProvider;
+		this.audience=audience;
+
 		try {
 			this.signatary=new NonRepudiation();
 		} catch (final NoSuchAlgorithmException | NoSuchPaddingException e) {
@@ -38,6 +38,10 @@ public class SecurityOperations implements ISignature{
 			e.printStackTrace();
 			throw e;
 		}
+	}
+
+	public SecurityOperations(IPublicKey service) throws GeneralSecurityException {
+		this("https://identity.oraclecloud.com/","NGESO",service);
 	}
 
 	@Override
