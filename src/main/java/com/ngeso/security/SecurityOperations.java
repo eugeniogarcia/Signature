@@ -42,7 +42,6 @@ public class SecurityOperations implements ISignature{
 
 	@Override
 	public SignatureResult sign(String privateKey, String payload) {
-		//Sign payload
 		try {
 			return new SignatureResult.Builder().isValid(true).signature(this.signatary.signString(payload,KeyManagement.parsePrivateCertificate(privateKey))).build();
 		} catch (final Exception e) {
@@ -55,9 +54,9 @@ public class SecurityOperations implements ISignature{
 	public VerifyResult verify(String jwt, String scope, String payload, String signature) {
 		final Token theToken;
 		try {
-			//Verify Token
 			theToken=parseToken(jwt,scope);
 		}catch (final TokenInvalidException ex) {
+			ex.printStackTrace();
 			return new VerifyResult.Builder().message(ex.getMessage()).errorCode("TokenInvalidException").isValid(false).build();
 		}
 		// Get Public Key
