@@ -2,7 +2,7 @@ package com.ngeso.security.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class jwt {
+public class JWT {
 	@JsonProperty("access_token")
 	private String access_token ;
 
@@ -12,17 +12,17 @@ public class jwt {
 	@JsonProperty("expires_in")
 	private String expires_in;
 
-	public jwt access_token(String access_token) {
+	public JWT access_token(String access_token) {
 		this.access_token = access_token;
 		return this;
 	}
 
-	public jwt token_type(String token_type) {
+	public JWT token_type(String token_type) {
 		this.token_type = token_type;
 		return this;
 	}
 
-	public jwt expires_in(String expires_in) {
+	public JWT expires_in(String expires_in) {
 		this.expires_in = expires_in;
 		return this;
 	}

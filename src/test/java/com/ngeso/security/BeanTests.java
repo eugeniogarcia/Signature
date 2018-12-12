@@ -22,7 +22,7 @@ import com.ngeso.security.crypto.KeyManagement;
 import com.ngeso.security.crypto.NonRepudiation;
 import com.ngeso.security.model.Result;
 import com.ngeso.security.model.VerifyResult;
-import com.ngeso.security.model.jwt;
+import com.ngeso.security.model.JWT;
 
 
 public class BeanTests {
@@ -131,7 +131,7 @@ public class BeanTests {
 
 		final UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(Constants.url_idc+"/oauth2/v1/token");
 
-		final ResponseEntity<jwt> resp=rt.postForEntity(builder.build().toUri(),request,jwt.class);
+		final ResponseEntity<JWT> resp=rt.postForEntity(builder.build().toUri(),request,JWT.class);
 		return resp.getBody().getAccess_token();
 	}
 
