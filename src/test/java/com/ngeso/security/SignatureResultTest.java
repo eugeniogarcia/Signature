@@ -4,33 +4,33 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 
-import com.ngeso.security.model.SignatureResult;
+import com.ngeso.security.model.Result;
 
 public class SignatureResultTest {
 	@Test
 	public void SignatureResult1() {
-		final SignatureResult result=new SignatureResult.Builder()
+		final Result result=new Result.Builder()
 				.errorCode("myError")
 				.isValid(false)
 				.message("myCode")
 				.build();
 
 		assertThat(result.getErrorCode()).isSameAs("myError");
-		assertThat(result.getSignature()).isSameAs("");
-		assertThat(result.getMessage()).isSameAs("myCode");
+		assertThat(result.getOutput()).isSameAs("");
+		assertThat(result.getErrorMessage()).isSameAs("myCode");
 		assertThat(result.isValid()).isFalse();
 
 	}
 
 	public void SignatureResult2() {
-		final SignatureResult result=new SignatureResult.Builder()
+		final Result result=new Result.Builder()
 				.isValid(true)
-				.signature("firma")
+				.output("firma")
 				.build();
 
 		assertThat(result.getErrorCode()).isSameAs("");
-		assertThat(result.getSignature()).isSameAs("firma");
-		assertThat(result.getMessage()).isSameAs("");
+		assertThat(result.getOutput()).isSameAs("firma");
+		assertThat(result.getErrorMessage()).isSameAs("");
 		assertThat(result.isValid()).isTrue();
 
 	}

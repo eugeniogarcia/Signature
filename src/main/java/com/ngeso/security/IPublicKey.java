@@ -1,6 +1,8 @@
 package com.ngeso.security;
 
+import com.ngeso.security.model.Result;
+
 public interface IPublicKey {
 	//Gets the Public Key of a MP
-	String getPublicKey(String mpID);
+	Result getPublicKey(String mpID);
 }

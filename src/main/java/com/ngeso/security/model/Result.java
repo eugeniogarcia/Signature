@@ -1,25 +1,25 @@
 package com.ngeso.security.model;
 
-public class SignatureResult {
-	private final String signature;
-	private final String message;
+public class Result {
+	private final String output;
+	private final String errorMessage;
 	private final String errorCode;
 	private final boolean isValid;
 
-	private SignatureResult(String signature,String message, String errorCode, boolean isValid) {
+	private Result(String signature,String message, String errorCode, boolean isValid) {
 		super();
-		this.message = message;
+		this.errorMessage = message;
 		this.errorCode = errorCode;
 		this.isValid = isValid;
-		this.signature=signature;
+		this.output=signature;
 	}
 
-	public String getSignature() {
-		return signature;
+	public String getOutput() {
+		return output;
 	}
 
-	public String getMessage() {
-		return message;
+	public String getErrorMessage() {
+		return errorMessage;
 	}
 
 	public String getErrorCode() {
@@ -31,13 +31,13 @@ public class SignatureResult {
 	}
 
 	public static class Builder{
-		private String signature="";
+		private String output="";
 		private String message="";
 		private String errorCode="";
 		private boolean isValid=false;
 
-		public Builder signature(String signature) {
-			this.signature=signature;
+		public Builder output(String signature) {
+			this.output=signature;
 			return this;
 		}
 
@@ -56,8 +56,8 @@ public class SignatureResult {
 			return this;
 		}
 
-		public SignatureResult build() {
-			return new SignatureResult(this.signature,this.message,this.errorCode, this.isValid);
+		public Result build() {
+			return new Result(this.output,this.message,this.errorCode, this.isValid);
 		}
 
 	}

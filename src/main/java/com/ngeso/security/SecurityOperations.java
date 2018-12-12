@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import com.ngeso.security.crypto.KeyManagement;
 import com.ngeso.security.crypto.NonRepudiation;
 import com.ngeso.security.exception.TokenInvalidException;
-import com.ngeso.security.model.SignatureResult;
+import com.ngeso.security.model.Result;
 import com.ngeso.security.model.Token;
 import com.ngeso.security.model.VerifyResult;
 import com.ngeso.security.token.TokenParser;
@@ -24,9 +24,9 @@ public class SecurityOperations implements ISignature{
 	private NonRepudiation signatary;
 
 	@Value("${IDP:'https://identity.oraclecloud.com/'}")
-	private String identityProvider;
+	private final String identityProvider="https://identity.oraclecloud.com/";
 	@Value("${AUD:'NGESO'}")
-	private String audience;
+	private final String audience="NGESO";
 
 	public SecurityOperations(IPublicKey service) throws GeneralSecurityException {
 		super();
@@ -41,12 +41,12 @@ public class SecurityOperations implements ISignature{
 	}
 
 	@Override
-	public SignatureResult sign(String privateKey, String payload) {
+	public Result sign(String privateKey, String payload) {
 		try {
-			return new SignatureResult.Builder().isValid(true).signature(this.signatary.signString(payload,KeyManagement.parsePrivateCertificate(privateKey))).build();
+			return new Result.Builder().isValid(true).output(this.signatary.signString(payload,KeyManagement.parsePrivateCertificate(privateKey))).build();
 		} catch (final Exception e) {
 			e.printStackTrace();
-			return new SignatureResult.Builder().isValid(false).errorCode("Exception").message(e.getMessage()).build();
+			return new Result.Builder().isValid(false).errorCode("Exception").message(e.getMessage()).build();
 		}
 	}
 
@@ -60,13 +60,19 @@ public class SecurityOperations implements ISignature{
 			return new VerifyResult.Builder().message(ex.getMessage()).errorCode("TokenInvalidException").isValid(false).build();
 		}
 		// Get Public Key
-		final String pubKey=this.service.getPublicKey(theToken.getMpId());
-		//Verify Signature
-		try {
-			return this.signatary.verifySignatureString(payload, signature, KeyManagement.parsePublicCertificate(pubKey));
-		} catch (final Exception e) {
-			e.printStackTrace();
-			return new VerifyResult.Builder().isValid(false).errorCode("Exception").message(e.getMessage()).build();
+		final Result res=this.service.getPublicKey(theToken.getMpId());
+		if(res.isValid()) {
+			//Verify Signature
+			try {
+				return this.signatary.verifySignatureString(payload, signature, KeyManagement.parsePublicCertificate(res.getOutput()));
+			} catch (final Exception e) {
+				e.printStackTrace();
+				return new VerifyResult.Builder().isValid(false).errorCode("Exception").message(e.getMessage()).build();
+			}
+		}
+		else
+		{
+			return new VerifyResult.Builder().isValid(false).errorCode(res.getErrorCode()).message(res.getErrorMessage()).build();
 		}
 	}
 
@@ -82,7 +88,7 @@ public class SecurityOperations implements ISignature{
 			throw new TokenInvalidException("The Audience is incorrect");
 		}
 		//Verify Token scope
-		if(theToken.getScope().compareTo(scope)!=0) {
+		if((theToken.getAud()+theToken.getScope()).compareTo(scope)!=0) {
 			throw new TokenInvalidException("The Scope is incorrect");
 		}
 		return theToken;
