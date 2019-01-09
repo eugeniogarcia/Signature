@@ -26,7 +26,7 @@ public class NonRepudiation {
 	private final Signature rsa;
 
 	public NonRepudiation() throws NoSuchAlgorithmException, NoSuchPaddingException {
-		this.rsa = Signature.getInstance("SHA1withRSA");
+		this.rsa = Signature.getInstance("SHA256withRSA");
 	}
 
 	public byte[] signByte(String data, PrivateKey RSAPrivateKey) throws InvalidKeyException, Exception{
