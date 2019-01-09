@@ -7,3 +7,6 @@ pkcs8 -topk8 -nocrypt -in NGESO_RS256.key -out NGESO_RS256_old.key
 req -new -key NGESO_RS256_old.key -out NGESO_RS256_old_req.pem
 
 x509 -req -in NGESO_RS256_old_req.pem -signkey NGESO_RS256_old.key -out NGESO_RS256_old.pem
+
+//We can create a pkcs12 certificate (binary certificate) merging the public and private keys
+pkcs12 -inkey NGESO_RS256_old.key -in NGESO_RS256_old.pem -export -out ngeso.p12
